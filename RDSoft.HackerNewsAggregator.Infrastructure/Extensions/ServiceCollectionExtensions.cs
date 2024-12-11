@@ -8,6 +8,8 @@ using RDSoft.HackerNewsAggregator.Infrastructure.Clients;
 using RDSoft.HackerNewsAggregator.Infrastructure.Config;
 using RDSoft.HackerNewsAggregator.Infrastructure.Serialization;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using RDSoft.HackerNewsAggregator.Domain.Exceptions;
 
 namespace RDSoft.HackerNewsAggregator.Infrastructure.Extensions
 {
@@ -26,6 +28,12 @@ namespace RDSoft.HackerNewsAggregator.Infrastructure.Extensions
 			services.AddHttpClient<IHackerNewsClient, HackerNewsClient>(client =>
 			{
 				var options = configuration.GetSection("Endpoints").GetSection("HackerNews").Get<HackerNewsOptions>();
+
+				if (options == null)
+				{
+					throw new CustomException("No HackerNews endpoint configuration found!");
+				}
+
 				client.BaseAddress = new Uri(options.BaseUrl);
 				client.DefaultRequestHeaders.Add("Accept", "application/json");
 			});

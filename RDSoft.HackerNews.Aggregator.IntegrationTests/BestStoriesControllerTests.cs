@@ -20,14 +20,6 @@ namespace RDSoft.HackerNews.Aggregator.IntegrationTests
 {
 	public class BestStoriesControllerTests
 	{
-		private readonly ILogger<BestStoriesController> _logger;
-		private readonly IFactory<JsonSerializerOptions> _jsonOptionFactory;
-		private readonly Mock<HttpClient> _httpClient;
-		private readonly IMemoryCacheService _memoryCacheService;
-		private readonly IHackerNewsClient _hackerNewsClient;
-		private readonly IBestStoriesService _bestStoriesService;
-		private readonly BestStoriesController _bestStoriesController;
-
 		[Theory]
 		[InlineData(0)]
 		[InlineData(1)]
@@ -71,12 +63,15 @@ namespace RDSoft.HackerNews.Aggregator.IntegrationTests
 				BaseAddress = new Uri("https://example.com/")
 			};
 
-			var logger = new Mock<ILogger<BestStoriesController>>();
-			var memoryCacheService = new MemoryCacheService(new MemoryCache(new MemoryCacheOptions()));
+			var loggerService = new Mock<ILogger<BestStoriesService>>();
+			var loggerCache = new Mock<ILogger<MemoryCacheService>>();
+			var loggerController = new Mock<ILogger<BestStoriesController>>();
+
+			var memoryCacheService = new MemoryCacheService(new MemoryCache(new MemoryCacheOptions()), loggerCache.Object);
 			var jsonOptionsFactory = new JsonOptionsFactory();
 			var hackerNewsClient = new HackerNewsClient(httpClient, jsonOptionsFactory);
-			var bestStoriesService = new BestStoriesService(hackerNewsClient,memoryCacheService);
-			var controller = new BestStoriesController(logger.Object, bestStoriesService);
+			var bestStoriesService = new BestStoriesService(hackerNewsClient, memoryCacheService, loggerService.Object);
+			var controller = new BestStoriesController(loggerController.Object, bestStoriesService);
 
 			var storyDto = new StoryDto
 			{

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RDSoft.HackerNewsAggregator.Application.DTOs;
 using RDSoft.HackerNewsAggregator.Application.Interfaces;
@@ -11,7 +12,7 @@ using RDSoft.HackerNewsAggregator.Domain.Entities;
 
 namespace RDSoft.HackerNewsAggregator.Application.Services
 {
-	public class BestStoriesService(IHackerNewsClient hackerNewsClient, IMemoryCacheService cache) : IBestStoriesService
+	public class BestStoriesService(IHackerNewsClient hackerNewsClient, IMemoryCacheService cache, ILogger<BestStoriesService> logger) : IBestStoriesService
 	{
 		private const string CacheKey = "BestStoriesCache";
 		private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
@@ -20,6 +21,7 @@ namespace RDSoft.HackerNewsAggregator.Application.Services
 		{
 			if (n <= 0)
 			{
+				logger.Log(LogLevel.Warning, $"The number of stories must be greater than zero. Given: {n}!");
 				throw new ArgumentException("The number of stories must be greater than zero.", nameof(n));
 			}
 
@@ -53,9 +55,10 @@ namespace RDSoft.HackerNewsAggregator.Application.Services
 
 		private async Task<List<StoryDto>> FetchAndCacheStoriesAsync()
 		{
+			logger.Log(LogLevel.Information, "Downloaded data from endpoint.");
 			var storyIds = await hackerNewsClient.GetBestStoryIdsAsync();
 
-			var storyTasks = storyIds.Take(100).Select(hackerNewsClient.GetStoryDetailsAsync);
+			var storyTasks = storyIds.Take(1000).Select(hackerNewsClient.GetStoryDetailsAsync);
 			var stories = await Task.WhenAll(storyTasks);
 
 			var validStories = stories
@@ -63,6 +66,7 @@ namespace RDSoft.HackerNewsAggregator.Application.Services
 				.ToList();
 
 			cache.Set(CacheKey, validStories, CacheDuration);
+			logger.Log(LogLevel.Information, "Caching data");
 
 			return validStories;
 		}

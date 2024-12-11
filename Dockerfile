@@ -26,11 +26,11 @@ COPY . .
 
 # Configure workdir
 WORKDIR "/src/RDSoft.HackerNewsAggregator.Api"
-RUN dotnet build "RDSoft.HackerNewsAggregator.Api.csproj" -c Release -o /app/build
+RUN dotnet build "RDSoft.HackerNewsAggregator.Api.csproj" -o /app/build
 
 # Publish
 FROM build AS publish
-RUN dotnet publish "RDSoft.HackerNewsAggregator.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "RDSoft.HackerNewsAggregator.Api.csproj" -o /app/publish /p:UseAppHost=false
 
 # Create docker image
 FROM base AS final

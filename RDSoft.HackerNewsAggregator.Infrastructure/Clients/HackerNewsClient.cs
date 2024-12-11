@@ -23,7 +23,9 @@ namespace RDSoft.HackerNewsAggregator.Infrastructure.Clients
 				response.EnsureSuccessStatusCode();
 
 				var content = await response.Content.ReadAsStringAsync();
-				return JsonSerializer.Deserialize<IEnumerable<int>>(content, _jsonOptions);
+				var result = JsonSerializer.Deserialize<IEnumerable<int>>(content, _jsonOptions);
+
+				return result ?? [];
 			}
 			catch (Exception ex)
 			{

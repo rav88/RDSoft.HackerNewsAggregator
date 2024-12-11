@@ -4,11 +4,11 @@ namespace RDSoft.HackerNewsAggregator.Application.DTOs;
 
 public class StoryDto
 {
-	public string Title { get; set; }
+	public string? Title { get; set; }
 
-	public string Url { get; set; }
+	public string? Url { get; set; }
 
-	public string By { get; set; }
+	public string? By { get; set; }
 
 	public DateTime Time { get; set; }
 

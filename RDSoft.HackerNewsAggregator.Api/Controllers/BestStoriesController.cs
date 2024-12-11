@@ -13,6 +13,8 @@ namespace RDSoft.HackerNewsAggregator.Controllers
         {
 	        var stories = await bestStoriesService.GetBestStoriesAsync(count);
 
+            logger.Log(LogLevel.Information, $"Received {stories.Count()} stories from controller.");
+
 	        return stories;
         }
     }

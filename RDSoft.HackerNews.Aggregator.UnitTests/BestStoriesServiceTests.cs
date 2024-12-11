@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Moq;
 using RDSoft.HackerNewsAggregator.Application.DTOs;
 using RDSoft.HackerNewsAggregator.Application.Interfaces;
@@ -10,7 +11,8 @@ namespace RDSoft.HackerNews.Aggregator.UnitTests
 	{
 		private readonly Mock<IHackerNewsClient> _mockHackerNewsClient;
 		private readonly Mock<IMemoryCacheService> _mockMemoryCacheService;
-
+		private readonly Mock<ILogger<BestStoriesService>> _mockLoggerStoriesService;
+		
 		private readonly BestStoriesService _bestStoriesService;
 
 		public BestStoriesServiceTests()
@@ -18,9 +20,10 @@ namespace RDSoft.HackerNews.Aggregator.UnitTests
 			// Mocks initialization
 			_mockHackerNewsClient = new Mock<IHackerNewsClient>();
 			_mockMemoryCacheService = new Mock<IMemoryCacheService>();
+			_mockLoggerStoriesService = new Mock<ILogger<BestStoriesService>>();
 
 			// Real services initialization
-			_bestStoriesService = new BestStoriesService(_mockHackerNewsClient.Object, _mockMemoryCacheService.Object);
+			_bestStoriesService = new BestStoriesService(_mockHackerNewsClient.Object, _mockMemoryCacheService.Object, _mockLoggerStoriesService.Object);
 		}
 
 		[Fact]
@@ -41,7 +44,7 @@ namespace RDSoft.HackerNews.Aggregator.UnitTests
 			_mockMemoryCacheService
 				.Setup(mc => mc.TryGetValue(cacheKey, out cacheEntry))
 				.Returns(true)
-				.Callback((object key, out object value) => { value = key.Equals(cacheKey) ? cachedStories : null; });
+				.Callback((object key, out object value) => { value = (key.Equals(cacheKey) ? cachedStories : null)!; });
 			_mockHackerNewsClient
 				.Setup(client => client.GetStoryDetailsAsync(It.IsAny<int>()))
 				.ReturnsAsync(new StoryDto()
@@ -81,7 +84,7 @@ namespace RDSoft.HackerNews.Aggregator.UnitTests
 				fetchedIds.Add(i+1);
 			}
 
-			object cacheEntry = null;
+			object? cacheEntry = null;
 			_mockMemoryCacheService
 				.Setup(mc => mc.TryGetValue(cacheKey, out cacheEntry))
 				.Returns(false);

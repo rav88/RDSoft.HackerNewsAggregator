@@ -55,6 +55,7 @@ namespace RDSoft.HackerNews.Aggregator.UnitTests
 				Score = 1234
 			};
 
+			Assert.NotNull(storyDto);
 			Assert.Equal(expectedStoryDto.Title, storyDto.Title);
 			Assert.Equal(expectedStoryDto.Time, storyDto.Time);
 			Assert.Equal(expectedStoryDto.By, storyDto.By);
