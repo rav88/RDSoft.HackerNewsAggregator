@@ -1,12 +1,6 @@
 
-using System.Text.Json;
-using RDSoft.HackerNewsAggregator.Application.Interfaces;
-using RDSoft.HackerNewsAggregator.Application.Services;
-using RDSoft.HackerNewsAggregator.Infrastructure.Cache;
-using RDSoft.HackerNewsAggregator.Infrastructure.Clients;
 using RDSoft.HackerNewsAggregator.Infrastructure.Config;
 using RDSoft.HackerNewsAggregator.Infrastructure.Extensions;
-using RDSoft.HackerNewsAggregator.Infrastructure.Serialization;
 
 namespace RDSoft.HackerNewsAggregator
 {
@@ -19,30 +13,22 @@ namespace RDSoft.HackerNewsAggregator
             var builder = WebApplication.CreateBuilder(args);
 
 			// Add memory cache.
-			builder.Services.AddMemoryCache();
-            builder.Services.AddScoped<IMemoryCacheService, MemoryCacheService>();
+            builder.Services.AddCaching();
 
-            // Register HackerNewsOptions
-            builder.Services.Configure<HackerNewsOptions>(builder.Configuration.GetSection(HackerNewsEndpoint));
+			// Register HackerNewsOptions
+			builder.Services.Configure<HackerNewsOptions>(builder.Configuration.GetSection(HackerNewsEndpoint));
 
             // Register HttpClient
-            builder.Services.AddHttpClient<IHackerNewsClient, HackerNewsClient>(client =>
-            {
-	            // Use options to configure HttpClient
-	            var options = builder.Configuration.GetSection("Endpoints").GetSection("HackerNews").Get<HackerNewsOptions>();
-	            client.BaseAddress = new Uri(options.BaseUrl);
-	            client.DefaultRequestHeaders.Add("Accept", "application/json");
-            });
+            builder.Services.AddHackerNewsClient(builder.Configuration);
 
             // Register services
-            builder.Services.AddScoped<IBestStoriesService, BestStoriesService>();
-            builder.Services.AddSingleton<IFactory<JsonSerializerOptions>, JsonOptionsFactory>();
+            builder.Services.AddServices();
 
+			// Register controllers
 			builder.Services.AddControllers();
 
-			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-			builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+			// Configure Swagger
+			builder.Services.AddSwagger();
 
             var app = builder.Build();
 
