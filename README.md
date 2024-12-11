@@ -1,5 +1,15 @@
 # RDSoft.HackerNewsAggregator
 
+This is a .NET 8 Api application, prepared for dockerization.<br />
+It is a HackerNews Stories aggregator and wrapper. It temporarily stores data from the HackerNews API with simple caching.<br />
+
+## Contents
+- [Description](#description)
+- [Enchancements for the future](#enchancements-for-the-future)
+- [Installation (dotnet)](#run-with-dotnet-cli)
+- [Installation (docker)](#deploy-as-a-docker-container)
+- [Project structure](#explanation-of-structure)
+
 ## Description
 This app is a HackerNews Stories aggregator and wrapper from the HackerNews API with simple caching.<br />
 It downloads the Story's ID list, then gets the information for every Story, and orders them descending according to the commentCount value.<br />
@@ -52,9 +62,9 @@ Swagger: http://localhost:3000/swagger/index.html <br />
 ## Deploy as a Docker Container
 ```bash
 docker build -t rdsoft-hackernewsaggregator:v1.0 . 
-docker run -d -p 8080:8080 --name hackernews_aggregator_api rdsoft-hackernewsaggregator:v1.0
+docker run -d -p 3000:3000 --name hackernews_aggregator_api rdsoft-hackernewsaggregator:v1.0
 ```
-Endpoint: GET http://localhost:8080/api/v1/BestStories?count=N where N > 0
+Endpoint: GET http://localhost:3000/api/v1/BestStories?count=N where N > 0
   
 Runs in production mode - no Swagger
 
