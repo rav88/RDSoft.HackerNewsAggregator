@@ -1,8 +1,7 @@
 # Downlaod ASP.NET Core linux image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 3000
 
 # Download SDK .NET 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -26,11 +25,11 @@ COPY . .
 
 # Configure workdir
 WORKDIR "/src/RDSoft.HackerNewsAggregator.Api"
-RUN dotnet build "RDSoft.HackerNewsAggregator.Api.csproj" -o /app/build
+RUN dotnet build "RDSoft.HackerNewsAggregator.Api.csproj" -c Debug -o /app/build
 
 # Publish
 FROM build AS publish
-RUN dotnet publish "RDSoft.HackerNewsAggregator.Api.csproj" -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "RDSoft.HackerNewsAggregator.Api.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 # Create docker image
 FROM base AS final

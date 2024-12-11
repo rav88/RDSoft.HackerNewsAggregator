@@ -62,9 +62,9 @@ Swagger: http://localhost:3000/swagger/index.html <br />
 ## Deploy as a Docker Container
 ```bash
 docker build -t rdsoft-hackernewsaggregator:v1.0 . 
-docker run -d -p 8080:8080 --name hackernews_aggregator_api rdsoft-hackernewsaggregator:v1.0
+docker run -d -p 3000:3000 --name hackernews_aggregator_api rdsoft-hackernewsaggregator:v1.0
 ```
-Endpoint: GET http://localhost:8080/api/v1/BestStories?count=N where N > 0
+Endpoint: GET http://localhost:3000/api/v1/BestStories?count=N where N > 0
   
 Runs in production mode - no Swagger
 
