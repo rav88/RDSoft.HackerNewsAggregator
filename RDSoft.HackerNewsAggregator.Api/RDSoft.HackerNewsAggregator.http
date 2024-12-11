@@ -1,0 +1,6 @@
+@RDSoft.HackerNewsAggregator_HostAddress = http://localhost:3000
+
+GET {{RDSoft.HackerNewsAggregator_HostAddress}}/API/v1/BestStories?count=3
+Accept: application/json
+
+###
