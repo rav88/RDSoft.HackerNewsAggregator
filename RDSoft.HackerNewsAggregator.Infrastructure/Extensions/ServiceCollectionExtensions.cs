@@ -11,7 +11,7 @@ using System.Text.Json;
 
 namespace RDSoft.HackerNewsAggregator.Infrastructure.Extensions
 {
-	public static class ServiceCollectionExtension
+	public static class ServiceCollectionExtensions
 	{
 		public static IServiceCollection AddCaching(this IServiceCollection services)
 		{
